@@ -5,16 +5,17 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
 
 public class Game {
 
-
-    Boolean[][] gameField = new Boolean[50][50];
-    Boolean[][] newGameField = new Boolean[50][50];
-    Canvas canvasPanel;
-    Boolean gameIsOn = false;
-    volatile boolean goNewField = false;
+    private Boolean[][] gameField = new Boolean[50][50];
+    private Boolean[][] newGameField = new Boolean[50][50];
+    private Boolean gameIsOn = false;
+    private volatile boolean goNewField = false;
 
     public static void main(String[] args) {
 
@@ -36,22 +37,23 @@ public class Game {
                 goNewField = !goNewField;
                 bottom0.setText(goNewField? "Stop":"Play"); }});
         bottom1.addActionListener(new playTheGame());
-        bottom2.addActionListener(new fillingPanelRandom());
-        bottom3.addActionListener(new ClearPanel());
+        bottom2.addActionListener(fillingPanelRandom);
+        bottom3.addActionListener(ClearPanel);
         bottom1.setSize(100, 150);
 
-        canvasPanel = new Canvas();
-        canvasPanel.setSize(300, 300);
-        canvasPanel.setBackground(Color.white);
+
+        Canvas.setSize(300, 300);
+        Canvas.setBackground(Color.white);
 
         panel.add(bottom0);
         panel.add(bottom1);
         panel.add(bottom2);
         panel.add(bottom3);
 
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(360, 417);
-        frame.getContentPane().add(BorderLayout.CENTER, canvasPanel);
+        frame.getContentPane().add(BorderLayout.CENTER, Canvas);
         frame.getContentPane().add(BorderLayout.SOUTH, panel);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -59,28 +61,14 @@ public class Game {
         while (true){
             if (goNewField){
                 process();
-                canvasPanel.repaint();
+                Canvas.repaint();
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) { e.printStackTrace(); }
             }
         }
     }
-
-    class ClearPanel implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            for (int x = 0; x < gameField.length; x++) {
-                for (int y = 0; y < gameField.length; y++) {
-                    gameField[x][y] = false;
-                }
-            }
-            gameIsOn = true;
-            canvasPanel.repaint();
-        }
-    }
-
-        int countNeighbors(int x, int y) {
+        private int countNeighbors(int x, int y) {
             int count = 0;
             for (int dx = -1; dx < 2; dx++) {
                 for (int dy = -1; dy < 2; dy++) {
@@ -113,7 +101,7 @@ public class Game {
                 System.arraycopy(newGameField[x], 0, gameField[x], 0, gameField.length);
             }
             gameIsOn = false;
-            canvasPanel.repaint();
+            Canvas.repaint();
         }
 
 
@@ -124,12 +112,19 @@ public class Game {
         }
     }
 
+    ActionListener ClearPanel = new ActionListener(){
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (int x = 0; x < gameField.length; x++) {
+                for (int y = 0; y < gameField.length; y++) {
+                    gameField[x][y] = false;
+                }
+            }
+            gameIsOn = true;
+            Canvas.repaint();
+        }};
 
-
-
-
-    class fillingPanelRandom implements ActionListener {
-
+    ActionListener fillingPanelRandom = new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent e) {
             int random = 0;
@@ -144,14 +139,10 @@ public class Game {
                 }
             }
             gameIsOn = true;
-            canvasPanel.repaint();
-        }
+            Canvas.repaint();
+        }};
 
-
-    }
-
-    class Canvas extends JPanel {
-
+    JPanel Canvas = new JPanel(){
         @Override
         public void paint(Graphics g) {
             super.paint(g);
@@ -163,7 +154,7 @@ public class Game {
                             g.fillOval(x * 7, y * 7, 7, 7);
                         } else {
                             g.setColor(Color.WHITE);
-                                g.fillOval(x * 7, y * 7, 7, 7);
+                            g.fillOval(x * 7, y * 7, 7, 7);
                         }
                     } else {
                         if (newGameField[x][y]) {
@@ -172,10 +163,10 @@ public class Game {
                         } else {
                             g.setColor(Color.WHITE);
                             g.fillOval(x * 7, y * 7, 7, 7);
+                        }
                     }
                 }
             }
         }
-    }
-    }
+    };
 }
