@@ -41,7 +41,6 @@ public class Game {
         bottom3.addActionListener(ClearPanel);
         bottom1.setSize(100, 150);
 
-
         Canvas.setSize(300, 300);
         Canvas.setBackground(Color.white);
 
@@ -49,7 +48,6 @@ public class Game {
         panel.add(bottom1);
         panel.add(bottom2);
         panel.add(bottom3);
-
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(360, 417);
@@ -103,7 +101,6 @@ public class Game {
             gameIsOn = false;
             Canvas.repaint();
         }
-
 
     class playTheGame implements ActionListener{
         @Override
